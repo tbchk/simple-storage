@@ -2,6 +2,7 @@ import re
 from typing import List
 from glob import glob
 import os
+from abc import ABCMeta, abstractmethod
 
 from google.cloud import storage
 
