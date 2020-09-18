@@ -139,3 +139,5 @@ dmypy.json
 
 # Test scripts
 _test/
+
+.vscode/
