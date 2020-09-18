@@ -1,4 +1,3 @@
-import re
 import io
 from typing import List
 from urllib.parse import urlparse
@@ -29,18 +28,29 @@ class GCStorage(StorageBase):
 
         return p
 
-    def _list_blobs(self, uri: str, delimiter='/') -> List[DataUnit]:
-        parsed_url = self._parse_uri(uri)
-
+    def _get_bucket_prefix(self, parsed_url):
         bucket_name = parsed_url.netloc
         prefix = parsed_url.path
+
+        if prefix != '' and prefix[0] == '/':
+            prefix = prefix[1:]
+
+        return bucket_name, prefix
+
+    def _list_blobs(self, uri: str, delimiter='/') -> List[DataUnit]:
+        parsed_url = self._parse_uri(uri)
+        bucket_name, prefix = self._get_bucket_prefix(parsed_url)
+
+        if prefix:
+            if prefix[-1] != '/':
+                prefix = prefix + '/'
 
         blobs = self.storage_client.list_blobs(
             bucket_name, prefix=prefix, delimiter=delimiter
         )
 
-        path_objects = [DataUnit(name=blb.name,
-                                 uri=uri + blb.name,
+        path_objects = [DataUnit(name=blb.name.replace(prefix, ''),
+                                 uri=f"gs://{bucket_name}/{prefix}{blb.name.replace(prefix, '')}",
                                  is_folder=False)
                         for page in blobs.pages for blb in page]
 
@@ -52,10 +62,11 @@ class GCStorage(StorageBase):
         return path_objects + path_prefixes
 
     def _upload_blob(self, data: bytes, uri: str):
-        bucket_name, relative_path = self._parse_uri(uri)
+        parsed_url = self._parse_uri(uri)
+        bucket_name, prefix = self._get_bucket_prefix(parsed_url)
 
         bucket = self.storage_client.bucket(bucket_name)
-        blob = bucket.blob(uri)
+        blob = bucket.blob(prefix)
 
         f = io.BytesIO(data)
         f.seek(0)
