@@ -1,7 +1,7 @@
-import urllib.parse as urlparse
+from urllib.parse import urlparse
 from typing import List
-from clients import LocalStorage, GCStorage
-from templates import DataUnit, StorageBase
+from .clients import LocalStorage, GCStorage
+from .templates import DataUnit, StorageBase
 
 network_clients = {
     'gs': GCStorage

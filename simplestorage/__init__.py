@@ -1,4 +1,4 @@
-from interface import StorageInterface
+from .interface import StorageInterface
 
 interface_session = StorageInterface()
 

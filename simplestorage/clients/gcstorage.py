@@ -1,13 +1,12 @@
 import re
 import io
 from typing import List
+from urllib.parse import urlparse
 from google.cloud import storage
 from ..templates import StorageBase, DataUnit
 
 
 class GCStorage(StorageBase):
-    URI_REGEX = re.compile(r'[a-zA-Z]+://([a-z_-]*)/(.*)')
-
     def __init__(self, project: str = None):
         self.storage_client = storage.Client(project=project)
 
@@ -20,24 +19,33 @@ class GCStorage(StorageBase):
         return done
 
     def _parse_uri(self, uri: str):
-        results = re.findall(self.URI_REGEX, uri)
-        if len(results) == 0:
+        if uri[-1] == '/':
+            uri = uri[:-1]
+
+        p = urlparse(uri)
+
+        if p.scheme != 'gs' or p.netloc == '':
             raise Exception('Invalid URI: %s' % uri)
 
-        bucket, relative_path = results[0]
-        return bucket, relative_path
+        return p
 
     def _list_blobs(self, uri: str, delimiter='/') -> List[DataUnit]:
-        bucket_name, relative_path = self._parse_uri(uri)
+        parsed_url = self._parse_uri(uri)
+
+        bucket_name = parsed_url.netloc
+        prefix = parsed_url.path
+
         blobs = self.storage_client.list_blobs(
-            bucket_name, prefix=relative_path, delimiter=delimiter
+            bucket_name, prefix=prefix, delimiter=delimiter
         )
 
-        path_objects = [DataUnit(name=blb.name, uri=blb.uri, is_folder=False)
+        path_objects = [DataUnit(name=blb.name,
+                                 uri=uri + blb.name,
+                                 is_folder=False)
                         for page in blobs.pages for blb in page]
 
-        path_prefixes = [DataUnit(name=pref.replace(relative_path, ''),
-                                  uri=f"gs://{bucket_name}/{pref}",
+        path_prefixes = [DataUnit(name=pref.replace(prefix, '')[:-1],
+                                  uri=f"gs://{bucket_name}/{pref[:-1]}",
                                   is_folder=True)
                          for pref in blobs.prefixes]
 
@@ -50,6 +58,7 @@ class GCStorage(StorageBase):
         blob = bucket.blob(uri)
 
         f = io.BytesIO(data)
+        f.seek(0)
         blob.upload_from_file(f)
 
         return True

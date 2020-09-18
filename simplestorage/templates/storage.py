@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from data import DataUnit
+from .data import DataUnit
 
 
 class StorageBase(metaclass=ABCMeta):
