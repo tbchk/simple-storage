@@ -25,7 +25,7 @@ you can use it with cloud too
 
     simplestorage.ls('gs://my-bucket/someprefix')
 
-## File Saving to local/cloud
+### File Saving to local/cloud
     import simplestorage
 
     simplestorage.save(data=b"some initial binary data: \x00\x01", uri="gs://mybucket/test/binary.bin")
