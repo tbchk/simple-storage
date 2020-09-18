@@ -32,4 +32,5 @@ you can use it with cloud too
 
 for local just change the uri
 
-    simplestorage.save(data=..., uri="/home/user/test/binary.bin"
+    simplestorage.save(
+        data=..., uri="/home/user/test/binary.bin")
