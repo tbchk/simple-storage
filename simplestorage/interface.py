@@ -1,29 +1,34 @@
+import urllib.parse as urlparse
 from typing import List
 from clients import LocalStorage, GCStorage
 from templates import DataUnit, StorageBase
+
+network_clients = {
+    'gs': GCStorage
+}
 
 
 class StorageInterface(StorageBase):
 
     def __init__(self):
-        self.local_service = None
-        self.gcs_service = None
+        self.service = {}
 
     def _get_service(self, uri: str):
-        assert '/' in uri, 'Malformed path'
-        protocol = uri.split('/')[0]
+        p = urlparse(uri)
 
-        if protocol == 'gs:':
-            if not self.gcs_service:
-                self.gcs_service = GCStorage()
+        if p.scheme == '' and p.path == '':
+            raise Exception('Invalid uri %s' % uri)
 
-            return self.gcs_service
-        elif protocol == '':
-            if not self.local_service:
-                self.local_service = LocalStorage()
-            return self.local_service
-        else:
-            raise Exception('Unknown service in path: %s' % uri)
+        if p.scheme in network_clients.keys() and p.netloc == '':
+            raise Exception('Invalid or unrecognized uri %s' % uri)
+
+        # Load service
+        if p.scheme == '' and p.scheme not in self.service.keys():
+            self.service[p.scheme] = LocalStorage()
+        elif p.scheme not in self.service.keys():
+            self.service[p.scheme] = network_clients[p.scheme]()
+
+        return self.service[p.scheme]
 
     def ls(self, uri: str) -> List[DataUnit]:
         service = self._get_service(uri)
