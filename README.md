@@ -28,7 +28,9 @@ you can use it with cloud too
 ### File Saving to local/cloud
     import simplestorage
 
-    simplestorage.save(data=b"some initial binary data: \x00\x01", uri="gs://mybucket/test/binary.bin")
+    binary_data = b"some initial binary data: \x00\x01"
+    uri = "gs://mybucket/test/binary.bin"
+    simplestorage.save(data=binary_data, uri=uri)
 
 for local just change the uri
 
