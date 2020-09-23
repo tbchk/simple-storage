@@ -93,10 +93,12 @@ class GCStorage(StorageBase):
             bucket_name, prefix=prefix, delimiter=delimiter
         )
 
-        path_objects = [DataUnit(name=blb.name.replace(prefix, ''),
-                                 uri=f"gs://{bucket_name}/{prefix}{blb.name.replace(prefix, '')}",
-                                 is_folder=False)
-                        for page in blobs.pages for blb in page]
+        path_objects = [
+            DataUnit(
+                name=blb.name.replace(prefix, ''),
+                uri=f"gs://{bucket_name}/{prefix}{blb.name.replace(prefix, '')}",
+                is_folder=False)
+            for page in blobs.pages for blb in page]
 
         path_prefixes = [DataUnit(name=pref.replace(prefix, '')[:-1],
                                   uri=f"gs://{bucket_name}/{pref[:-1]}",
