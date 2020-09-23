@@ -1,5 +1,6 @@
 import os
 import glob
+from io import BytesIO, StringIO
 from typing import List
 from ..templates import StorageBase, DataUnit
 
@@ -14,11 +15,19 @@ class LocalStorage(StorageBase):
 
         return elements
 
-    def save(self, data: bytes, uri: str):
+    def save(self, data: bytes, uri: str) -> bool:
         with open(uri, "wb") as f:
             f.write(data)
 
         return True
+
+    def load(self, uri: str) -> BytesIO:
+        f = open(uri, 'rb')
+        return f
+
+    def loads(self, uri: str) -> StringIO:
+        f = open(uri, 'r')
+        return f
 
     def _get_data_from_uri(self, uri: str) -> DataUnit:
         name: str = os.path.basename(uri)

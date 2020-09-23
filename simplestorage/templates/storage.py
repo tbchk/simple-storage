@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
+from io import StringIO, BytesIO
 from .data import DataUnit
 
 
@@ -9,5 +10,12 @@ class StorageBase(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def save(self, data: bytes, uri: str):
+    def save(self, data: bytes, uri: str) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def load(self, uri: str) -> BytesIO:
+        raise NotImplementedError
+
+    def loads(self, uri: str) -> StringIO:
         raise NotImplementedError

@@ -1,4 +1,4 @@
-import io
+from io import BytesIO, StringIO
 from typing import List
 from urllib.parse import urlparse
 from google.cloud import storage
@@ -16,6 +16,30 @@ class GCStorage(StorageBase):
     def save(self, data: bytes, uri: str) -> bool:
         done = self._upload_blob(data=data, uri=uri)
         return done
+
+    def load(self, uri: str) -> BytesIO:
+        f = self._download_to_memory(uri)
+        return f
+
+    def loads(self, uri: str) -> StringIO:
+        byte_stream = self._download_to_memory(uri)
+        str_obj = byte_stream.decode('utf-8')
+        string_stream = StringIO(str_obj)
+
+        return string_stream
+
+    def _download_to_memory(self, uri: str) -> BytesIO:
+        parsed_url = self._parse_uri(uri)
+        bucket_name, prefix = self._get_bucket_prefix(parsed_url)
+
+        bucket = self.storage_client.get_bucket(bucket_name)
+        blob = bucket.blob(prefix)
+
+        byte_stream = BytesIO()
+        blob.download_to_file(byte_stream)
+        byte_stream.seek(0)
+
+        return byte_stream
 
     def _parse_uri(self, uri: str):
         if uri[-1] == '/':
@@ -68,7 +92,7 @@ class GCStorage(StorageBase):
         bucket = self.storage_client.bucket(bucket_name)
         blob = bucket.blob(prefix)
 
-        f = io.BytesIO(data)
+        f = BytesIO(data)
         f.seek(0)
         blob.upload_from_file(f)
 
