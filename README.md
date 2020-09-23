@@ -11,12 +11,12 @@ Two ways simple interaction between cloud storage and local filesystem.
 
     results = simplestorage.ls('/home/myuser/')
 
-    print("######## DIRECTORIES  #########")
+    print("Listing DIRECTORIES:")
     for r in results:
         if r.is_folder:
             print(r.name)
 
-    print("######## FILES #########")
+    print("Listing FILES:")
     for r in results:
         if not r.is_folder:
             print(r.name)
