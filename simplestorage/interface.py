@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 from typing import List
+from io import BytesIO, StringIO
 from .clients import LocalStorage, GCStorage
 from .templates import DataUnit, StorageBase
 
@@ -38,4 +39,19 @@ class StorageInterface(StorageBase):
     def save(self, data: bytes, uri: str) -> bool:
         service = self._get_service(uri)
         status = service.save(data=data, uri=uri)
+        return status
+
+    def load(self, uri: str) -> BytesIO:
+        service = self._get_service(uri)
+        f = service.save(uri=uri)
+        return f
+
+    def loads(self, uri: str) -> StringIO:
+        service = self._get_service(uri)
+        f = service.save(uri=uri)
+        return f
+
+    def delete(self, uri: str) -> bool:
+        service = self._get_service(uri)
+        status = service.delete(uri=uri)
         return status

@@ -29,6 +29,10 @@ class LocalStorage(StorageBase):
         f = open(uri, 'r')
         return f
 
+    def delete(self, uri: str) -> bool:
+        os.remove(uri)
+        return True
+
     def _get_data_from_uri(self, uri: str) -> DataUnit:
         name: str = os.path.basename(uri)
         is_folder: bool = os.path.isdir(uri)

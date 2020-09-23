@@ -17,5 +17,10 @@ class StorageBase(metaclass=ABCMeta):
     def load(self, uri: str) -> BytesIO:
         raise NotImplementedError
 
+    @abstractmethod
     def loads(self, uri: str) -> StringIO:
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete(self, uri: str) -> bool:
         raise NotImplementedError

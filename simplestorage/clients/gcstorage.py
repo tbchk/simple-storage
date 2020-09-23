@@ -28,18 +28,29 @@ class GCStorage(StorageBase):
 
         return string_stream
 
-    def _download_to_memory(self, uri: str) -> BytesIO:
-        parsed_url = self._parse_uri(uri)
-        bucket_name, prefix = self._get_bucket_prefix(parsed_url)
+    def delete(self, uri: str) -> bool:
+        blob = self._get_blob(uri)
+        blob.delete()
 
-        bucket = self.storage_client.get_bucket(bucket_name)
-        blob = bucket.blob(prefix)
+        return True
+
+    def _download_to_memory(self, uri: str) -> BytesIO:
+        blob = self._get_blob(uri)
 
         byte_stream = BytesIO()
         blob.download_to_file(byte_stream)
         byte_stream.seek(0)
 
         return byte_stream
+
+    def _get_blob(self, uri: str):
+        parsed_url = self._parse_uri(uri)
+        bucket_name, prefix = self._get_bucket_prefix(parsed_url)
+
+        bucket = self.storage_client.get_bucket(bucket_name)
+        blob = bucket.blob(prefix)
+
+        return blob
 
     def _parse_uri(self, uri: str):
         if uri[-1] == '/':
@@ -60,6 +71,15 @@ class GCStorage(StorageBase):
             prefix = prefix[1:]
 
         return bucket_name, prefix
+
+    def _upload_blob(self, data: bytes, uri: str):
+        f = BytesIO(data)
+        f.seek(0)
+
+        blob = self._get_blob(uri)
+        blob.upload_from_file(f)
+
+        return True
 
     def _list_blobs(self, uri: str, delimiter='/') -> List[DataUnit]:
         parsed_url = self._parse_uri(uri)
@@ -84,16 +104,3 @@ class GCStorage(StorageBase):
                          for pref in blobs.prefixes]
 
         return path_objects + path_prefixes
-
-    def _upload_blob(self, data: bytes, uri: str):
-        parsed_url = self._parse_uri(uri)
-        bucket_name, prefix = self._get_bucket_prefix(parsed_url)
-
-        bucket = self.storage_client.bucket(bucket_name)
-        blob = bucket.blob(prefix)
-
-        f = BytesIO(data)
-        f.seek(0)
-        blob.upload_from_file(f)
-
-        return True
