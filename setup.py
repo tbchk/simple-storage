@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
@@ -10,7 +10,7 @@ setup(
     author='Juan F. Hernandez',
     author_email='jhernandez426@gmail.com',
     license='MIT',
-    packages=['simplestorage'],
+    packages=find_packages(exclude=("tests",)),
     keywords=['google', 'cloud', 'storage', 'local'],
     install_requires=[
         'google-cloud-storage',
