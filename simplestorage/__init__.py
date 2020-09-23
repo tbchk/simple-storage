@@ -16,9 +16,13 @@ def load(data: bytes, uri: str) -> BytesIO:
     return interface_session.load(uri=uri)
 
 
-def loads(self, uri: str) -> StringIO:
+def loads(uri: str) -> StringIO:
     return interface_session.loads(uri=uri)
 
 
-def delete(self, uri: str) -> bool:
+def delete(uri: str) -> bool:
+    return interface_session.delete(uri=uri)
+
+
+def rm(uri: str) -> bool:
     return interface_session.delete(uri=uri)
