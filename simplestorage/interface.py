@@ -51,7 +51,7 @@ class StorageInterface(StorageBase):
         f = service.loads(uri=uri)
         return f
 
-    def delete(self, uri: str) -> bool:
+    def rm(self, uri: str) -> bool:
         service = self._get_service(uri)
-        status = service.delete(uri=uri)
+        status = service.rm(uri=uri)
         return status

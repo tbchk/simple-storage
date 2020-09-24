@@ -22,5 +22,5 @@ class StorageBase(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, uri: str) -> bool:
+    def rm(self, uri: str) -> bool:
         raise NotImplementedError

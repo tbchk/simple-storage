@@ -6,7 +6,7 @@ setup(
     version='0.2.3',
     description='Storage client for local and gcloud',
     url='https://github.com/tbchk/simple-storage',
-    download_url='https://github.com/tbchk/simple-storage/archive/v0.2.2.tar.gz',
+    download_url='https://github.com/tbchk/simple-storage/archive/v0.2.3.tar.gz',
     author='Juan F. Hernandez',
     author_email='jhernandez426@gmail.com',
     license='MIT',
