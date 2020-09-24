@@ -28,7 +28,7 @@ class GCStorage(StorageBase):
 
         return string_stream
 
-    def delete(self, uri: str) -> bool:
+    def rm(self, uri: str) -> bool:
         blob = self._get_blob(uri)
         blob.delete()
 

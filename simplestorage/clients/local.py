@@ -29,7 +29,7 @@ class LocalStorage(StorageBase):
         f = open(uri, 'r')
         return f
 
-    def delete(self, uri: str) -> bool:
+    def rm(self, uri: str) -> bool:
         os.remove(uri)
         return True
 
