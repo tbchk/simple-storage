@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='simplestorage',
-    version='0.2.3',
+    version='0.2.4',
     description='Storage client for local and gcloud',
     url='https://github.com/tbchk/simple-storage',
     download_url='https://github.com/tbchk/simple-storage/archive/v0.2.3.tar.gz',
