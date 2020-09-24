@@ -43,12 +43,12 @@ class StorageInterface(StorageBase):
 
     def load(self, uri: str) -> BytesIO:
         service = self._get_service(uri)
-        f = service.save(uri=uri)
+        f = service.load(uri=uri)
         return f
 
     def loads(self, uri: str) -> StringIO:
         service = self._get_service(uri)
-        f = service.save(uri=uri)
+        f = service.loads(uri=uri)
         return f
 
     def delete(self, uri: str) -> bool:
