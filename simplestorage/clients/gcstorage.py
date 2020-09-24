@@ -23,7 +23,7 @@ class GCStorage(StorageBase):
 
     def loads(self, uri: str) -> StringIO:
         byte_stream = self._download_to_memory(uri)
-        str_obj = byte_stream.decode('utf-8')
+        str_obj = byte_stream.read().decode('utf-8')
         string_stream = StringIO(str_obj)
 
         return string_stream
